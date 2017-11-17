@@ -11,6 +11,7 @@ class Referral(models.Model):
     urgency = models.BooleanField()
     latitude = models.DecimalField(max_digits=9, decimal_places=6)
     longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    extrainfo = models.CharField(max_length=100)
 
     def __str__(self):
         return sender + ' referred ' + name + ' for ' + category + ' issues.'
