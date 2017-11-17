@@ -16,7 +16,14 @@ def add_referral(request):
     name = data['name']
     phone = data['phone']
     urgency = data['urgency']
+    category_name = data['category_name']
 
-    Referral.objects.create(sender=sender, name=name, phone=phone, urgency=urgency);
+    category = Category(name=category_name)
+    category.save()
+
+    referral = Referral(sender=sender, name=name, phone=phone, urgency=urgency);
+    referral.save()
+
+    category.referrals.add(referral)
 
     return HttpResponse("Hello World!" + json.dumps(data))
