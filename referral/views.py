@@ -3,12 +3,14 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 import json
 
-from models import Referral
+from models import Referral, Category
 
 # Create your views here.
 
+@csrf_exempt
 def add_referral(request):
     data = json.loads(request.body.decode("utf-8"))
 
@@ -26,4 +28,4 @@ def add_referral(request):
 
     category.referrals.add(referral)
 
-    return HttpResponse("Hello World!" + json.dumps(data))
+    return HttpResponse(json.dumps(data))
