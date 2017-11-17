@@ -27,4 +27,4 @@ class Subcategory(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
     def __str__(self):
-        return name ' is a subcategory of ' + category.name
+        return name + ' is a subcategory of ' + category.name
