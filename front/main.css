@@ -1,0 +1,46 @@
+
+
+/* Navigation Styling */
+nav {
+  background-color: #ea9042;
+  height: 60px;
+  padding: 10px;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+}
+
+nav > h3 {
+  color: white;
+}
+
+
+/* Main Content wrap + Padding */
+div.main-content-wrap {
+
+  padding: 50px;
+
+}
+
+/*div.pre-flow-selector {
+  display: flex !important;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+}*/
+
+footer > div.container {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 25px;
+}
+
+footer > div.container > p {
+
+    max-width: 300px;
+    margin-bottom: 0;
+
+}

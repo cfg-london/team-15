@@ -3,8 +3,7 @@ import React from 'react';
 class LogoComponent extends React.Component {
    render() {
       return (
-         <div>
-            <h1>Tell us about the problem</h1>
+         <div className="logo">
             <img src="./TH.jpg" />
          </div>
       );

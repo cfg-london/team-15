@@ -172,6 +172,7 @@ class FormComponent extends React.Component {
                    </button>     </div>) : '';
 
        return (
+
          <div>
          {buttons}
           <form action='/api/referral/add' method='POST'>
