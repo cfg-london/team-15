@@ -3,12 +3,15 @@ from __future__ import unicode_literals
 
 from django.db import models
 
+from datetime import datetime
+
 # Create your models here.
 class Referral(models.Model):
     sender = models.CharField(max_length=50)
     name = models.CharField(max_length=50)
     phone = models.CharField(max_length=12)
     urgency = models.BooleanField()
+    date = models.DateTimeField(default=datetime.now, blank=True)
     extrainfo = models.CharField(max_length=100)
     latitude = models.DecimalField(null=True, max_digits=9, decimal_places=6)
     longitude = models.DecimalField(null=True, max_digits=9, decimal_places=6)
