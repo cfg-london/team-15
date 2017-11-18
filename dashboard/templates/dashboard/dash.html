@@ -27,23 +27,26 @@
           </thead>
 
           <tbody>
-
-              {% for referral in refs %}
+            {% for referral in refs %}
               <tr>
-                  <!-- {% for category in referral.category.all %} -->
+
                   <td>{{ referral.urgency }}</td>
                   <td>{{ referral.name }}</td>
                   <td>{{ referral.phone }}</td>
-                  <td>...</td>
-                  <!-- <th>{{ category }} </th> -->
+                  <td>
+                    {% for category_set in categories %}
+                      {% for category in category_set %}
+                        {{ category.name }} </br>
+                      {% endfor %}
+                    {% endfor %}
+                  </td>
                   <td>{{ referral.date }}</td>
-                  <td>{{ referral.latitude }}, {{ referral.longitude }}</td>
+                  <td>{{ referral.latitude}}, {{ referral.longitude }}</td>
                   <td>{{ referral.sender }}</td>
                   <td>{{ referral.extrainfo }}</td>
-                  <!-- {% endfor %} -->
-                    </tr>
-              {% endfor %}
 
+                </tr>
+              {% endfor %}
           </tbody>
         </table>
         </br>
