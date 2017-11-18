@@ -18,3 +18,7 @@ class ReferralTests(TestCase):
         self.assertIs(response.status_code, 200)
         self.assertTrue(Referral.objects.filter(sender='Police').exists())
         self.assertFalse(Referral.objects.filter(sender='GP').exists())
+
+    def test_get_popular_categories(self):
+        response = self.client.get(reverse('popular_categories'))
+        self.assertIs(response.status_code, 200)
