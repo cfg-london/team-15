@@ -1,4 +1,8 @@
 import React from 'react';
+import LocationComponent from './LocationComponent.js';
+import {geolocated} from 'react-geolocated';
+import { Steps } from 'antd';
+const Step = Steps.Step;
 
 class FormComponent extends React.Component {
 
@@ -8,10 +12,13 @@ class FormComponent extends React.Component {
     super();
     this.state = {urgency: 0,
                   show: '',
-                  specifics: '',
                   problemField: '',
                   activeButton: '',
-                };
+                  location: '',
+                  latitude: '',
+                  longitude: '',
+                  step: 0,
+                  specifics: ''};
     this.makeUrg = this.makeUrg.bind(this);
     this.makeLong = this.makeLong.bind(this);
     this.pickHealth = this.pickHealth.bind(this);
@@ -20,7 +27,7 @@ class FormComponent extends React.Component {
     this.pickFuture = this.pickCrisis.bind(this);
     this.pickDomestic = this.pickDomestic.bind(this);
     this.pickFinancial = this.pickFinancial.bind(this);
-
+    
     this.probTypeHandler = this.probTypeHandler.bind(this);
     this.onSubmitHandler = this.onSubmitHandler.bind(this);
   }
@@ -51,7 +58,87 @@ class FormComponent extends React.Component {
         <input type="checkbox" name="problem" value={this.state.activeButton} />
       )
     })
+    
+    this.storeLocation = this.storeLocation.bind(this);
+    this.updateLocation = this.updateLocation.bind(this);
+    this.increaseStep1 = this.increaseStep1.bind(this);
+    this.increaseStep2 = this.increaseStep2.bind(this);
+    this.decreaseStep0 = this.decreaseStep0.bind(this);
+    this.decreaseStep1 = this.decreaseStep1.bind(this);
+  }
 
+  storeLocation() {
+    this.setState({location: <LocationComponent updateForm={this.updateLocation} />});
+  }
+
+  increaseStep1(e){
+    
+     // Get all buttons
+    var buttons = this.props.probTypes.map(prob => {
+        return (
+          <ProblemRadio
+            key={prob.title}
+            title={prob.title}
+            iconCode={prob.iconCode}
+          />
+        );
+      });
+    
+    e.preventDefault();
+    this.setState({step: 1});
+    this.setState({show:
+      (<div>
+       
+        <div className="probTypes-container">
+          {buttons}
+        </div>
+       
+       <div>
+        Specifics (optional) <input type='text' onChange={this.increaseStep2}/>
+       </div>
+       <button onClick={this.increaseStep2} className='button-block'>Next</button>
+       </div>)});
+  }
+
+  decreaseStep0(e){
+    e.preventDefault();
+    this.setState({step: 0});
+  }
+
+  increaseStep2(e){
+    e.preventDefault();
+    this.setState({step: 2});
+    this.setState({show: (<div>
+    <div>
+                          
+     <div>
+                          
+      Anything else we should know?
+       <input placeholder="E.g. Ran out of medication" type='text'/>
+        </div>
+        <label className="control switch success">
+        <span className="control-label small">
+          *I consent to the forwarding of this data to TOYNBE HALL.
+        </span>
+          <input type="checkbox" name="checkbox" />
+          <span className="control-indicator"></span>
+        </label>
+                          
+    <input type='checkbox' onChange={this.storeLocation}/>Share location
+    </div>
+    <input type='checkbox' required /> Consent to LinkAge+
+    <input type='submit' value='Send' />
+   </div>)});
+  }
+
+  decreaseStep1(e){
+    e.preventDefault();
+    thi.setState({step: 1});
+  }
+
+  updateLocation(lat, long) {
+    this.setState({latitude: lat});
+    this.setState({longitude: long});
   }
 
   pickHealth(){
@@ -130,49 +217,23 @@ class FormComponent extends React.Component {
 
   makeUrg() {
 
-    // Get all buttons
-    var buttons = this.props.probTypes.map(prob => {
-        return (
-          <ProblemRadio
-            key={prob.title}
-            title={prob.title}
-            iconCode={prob.iconCode}
-          />
-        );
-      });
-
     this.setState({urgency: 1});
+    if(this.state.step == 0)
     this.setState({show:
-       (<div>
-
-         <h2> Urgent Referral Request </h2>
-         <p> Enter the details below and we'll assess the situation as soon as we can. </p>
-
+       (
+         <div>
+          <div>       
         <div>
           <div>
-          Who are we worried about? <input placeholder="John Smith" type='text' name='who'/>
+          Who are we worried about? <input placeholder="John Smith" type='text' required name='who'/>
           </div>
           <div>
-          How can we reach this person? <input placeholder="+44 123 456 7890" type='text' name='phone' />
+          How can we reach this person? <input placeholder="+44 123 456 7890" type='text' name='phone' required onChange={this.increaseStep1} />
           </div>
         </div>
-
-        <div className="probTypes-container">
-          {buttons}
-        </div>
-        <div>
-         Anything else we should know?
-         <input placeholder="E.g. Ran out of medication" type='text'/>
-        </div>
-        <label className="control switch success">
-        <span className="control-label small">
-          *I consent to the forwarding of this data to TOYNBE HALL.
-        </span>
-          <input type="checkbox" name="checkbox" />
-          <span className="control-indicator"></span>
-        </label>
-        <input type='submit' value='Submit Referral' />
-    </div>) });
+          </div>
+          <button onClick={this.increaseStep1} className='button-block'> Next</button>
+         </div>)});
   }
 
   makeLong() {
@@ -182,21 +243,24 @@ class FormComponent extends React.Component {
       <div>
         <div>
         Your function:
-        <select>
+        <select name='function'>
           <option value='police'>Police</option>
           <option value='family'>Family member</option>
           <option value='doctor'>Doctor</option>
           <option value='volunteer'>Volunteer</option>
+          <option value='firefighter'>Fire Fighter</option>
+          <option value='socialworker'>Social Worker</option>
+          <option value='other' >Other</option>
         </select>
         </div>
         <div>
-        Who has the problem? <input type='text' name='who'/>
+        Who has the problem? <input type='text' name='who' required />
         </div>
         <div>
-        Their contact: <input type='text' name='phone' />
+        Their contact: <input type='text' name='phone' required />
         </div>
         <div>
-        Their address: <input type='text' name='address' />
+        Their address: <input type='text' name='address' required />
         </div>
       </div>
       <div>
@@ -207,15 +271,22 @@ class FormComponent extends React.Component {
        <input type='radio' name='type' value='Future' onChange={this.pickFuture} /> Later Life Planning
        <input type='radio' name='type' value='Domestic' onChange={this.pickDomestic} /> Domestic Assistance
        <input type='radio' name='type' value='Financial' onChange={this.pickFinancial} /> Money and Benefits
+       <input type='text' name='type' placeholder='Other' />
       </div>
+      <div>
+      <input type='checkbox' onChange={this.storeLocation}/>Share location
+      </div>
+      <input type='checkbox' required /> Consent to LinkAge+
+      <input type='submit' value='Send' />
   </div>) });
   }
 
    render() {
 
-     let buttons = (this.state.urgency == 0) ? (<div>
-       <h2>
+     let buttons = (this.state.urgency == 0) ? (
+                 <div>
                      What seems to be the problem?
+                     <h2>
                    </h2>
                    <button style={{height: 'auto'}} onClick={this.makeUrg} className="button button-xl button-block error position-center">
                      <i className="fa fa-2x fa-exclamation-circle" aria-hidden="true"></i>
@@ -227,19 +298,32 @@ class FormComponent extends React.Component {
                      <p> Someone needs help </p>
                    </button>     </div>) : '';
 
+    let ssteps = (this.state.urgency == 1) ?
+    <Steps current={this.state.step} >
+    <Step title="Person" description="Add the details" />
+    <Step title="Problem" description="Describe the problem" />
+    <Step title="Finishing" description="Location and consent" />
+    </Steps> : '';
+
+    let form = (this.state.urgency != 0 ) ? (
+      <div>
+        <h2> Urgent Referral Request </h2>
+        <p> Enter the details below and we'll assess the situation as soon as we can. </p>
+      {ssteps}
+    <form action='/api/referral/add' method='POST'>
+    {this.state.show}
+    {this.state.specifics}
+    <input type='hidden' name='urgent' value={(this.state.urgency==1)} />
+    <input type='hidden' name='latitude' value={this.state.latitude} />
+    <input type='hidden' name='longitude' value={this.state.longitude} />
+   </form></div>) : '';
+
        return (
 
          <div>
          {buttons}
-          <form
-            action='54.194.5.169:8000/api/refferral/add'
-            method='POST'
-            onSubmit={this.onSubmitHandler}
-          >
-          {this.state.show}
-          {this.state.problemField}
-          {this.state.specifics}
-         </form>
+         {form}
+         {this.state.location}
          </div>
        );
    }
