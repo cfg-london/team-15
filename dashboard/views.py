@@ -35,9 +35,11 @@ def download_csv(request):
                         u"Urgent", u"Category", u"Date", u"Location", u"Extra info"])
 
     for entry in referrals:
-        csvwriter.writerow([entry.sender, entry.name, entry.phone,
-                            entry.urgency, entry.category, entry.date,
-                            entry.latitude + ',' + entry.longitude, entry.extrainfo])
+        for category in entry.category_set.all():
+            csvwriter.writerow([entry.sender, entry.name, entry.phone,
+                                entry.urgency, category.name,  entry.date,
+                                str(entry.latitude) + ',' + str(entry.longitude),
+                                entry.extrainfo])
 
     response = HttpResponse(csvfile.getvalue(), content_type='text/csv')
     response["Content-Disposition"] = "attachment; filename=data.csv"

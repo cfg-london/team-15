@@ -7,7 +7,6 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!--Import materialize.css-->
     <link type="text/css" rel="stylesheet" href="{% static "css/materialize.min.css" %}"  media="screen,projection"/>
-    <link type="text/css" rel="stylesheet" href="{% static "css/index.css" %}"/>
     <title>Dashboard</title>
 </head>
 <body>
@@ -28,25 +27,29 @@
           </thead>
 
           <tbody>
-            {% for referral in refs %}
-              {% for category in referral.category.all %}
-              <th>{{ referral.urgent }}</th>
-              <th>{{ referral.name }}</th>
-              <th>{{ referral.phone }}</th>
-              <th>{{ category }} </th>
-              <th>{{ referral.date }}</th>
-              <th>{{ referral.latitude }}, {{ referral.longitude }}</th>
-              <th>{{ referral.sender }}</th>
-              <th>{{ referral.extrainfo }}</th>
+
+              {% for referral in refs %}
+              <tr>
+                  <!-- {% for category in referral.category.all %} -->
+                  <td>{{ referral.urgency }}</td>
+                  <td>{{ referral.name }}</td>
+                  <td>{{ referral.phone }}</td>
+                  <td>...</td>
+                  <!-- <th>{{ category }} </th> -->
+                  <td>{{ referral.date }}</td>
+                  <td>{{ referral.latitude }}, {{ referral.longitude }}</td>
+                  <td>{{ referral.sender }}</td>
+                  <td>{{ referral.extrainfo }}</td>
+                  <!-- {% endfor %} -->
+                    </tr>
               {% endfor %}
-            {% endfor %}
+
           </tbody>
         </table>
         </br>
         <div class="center">
           <a class="btn btn-large waves-effect indigo" href="{% url 'download_csv' %}">Download as CSV</a>
         </div>
-    </div>
 
     <!--Import jQuery before materialize.js-->
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>

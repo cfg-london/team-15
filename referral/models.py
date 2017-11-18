@@ -11,10 +11,10 @@ class Referral(models.Model):
     name = models.CharField(max_length=50)
     phone = models.CharField(max_length=12)
     urgency = models.BooleanField()
-    date = models.DateTimeField(default=datetime.now, blank=True)
-    extrainfo = models.CharField(null=True, max_length=100)
-    latitude = models.DecimalField(null=True, max_digits=9, decimal_places=6)
-    longitude = models.DecimalField(null=True, max_digits=9, decimal_places=6)
+    date = models.DateTimeField(default=datetime.now)
+    extrainfo = models.CharField(max_length=100, blank=True)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True)
 
     def __str__(self):
         return self.sender + ' referred ' + self.name
