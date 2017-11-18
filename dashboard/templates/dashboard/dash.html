@@ -3,18 +3,57 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="{% static 'css/dash.css' %}">
-    <title>DashBoard</title>
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="{% static "css/materialize.min.css" %}"  media="screen,projection"/>
+    <title>Dashboard</title>
 </head>
 <body>
     <div class="container">
-        <h1>The DashBoard</h1>
-        <a href="{% url 'download_csv' %}">Download as CSV</a>
-        <ul>
-        {% for referral in refs %}
-            <li>{{referral.sender}},{{referral.name}},{{referral.phone}},{{referral.urgency}},{{referral.date}}</li>
-        {% endfor %}
-        </ul>
-    </div>
+        <h1>Dashboard</h1>
+        <table class="highlight">
+          <thead>
+            <tr>
+                <th>Urgency</th>
+                <th>Vulnerable adult's name</th>
+                <th>Phone number</th>
+                <th>Category</th>
+                <th>Date</th>
+                <th>Location</th>
+                <th>Sender</th>
+                <th>Extra information</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for referral in refs %}
+              <tr>
+
+                  <td>{{ referral.urgency }}</td>
+                  <td>{{ referral.name }}</td>
+                  <td>{{ referral.phone }}</td>
+                  <td>
+                      {% for cat in referral.category_set.all %}
+                        {{cat.name}}
+                      {% endfor %}
+                  </td>
+                  <td>{{ referral.date }}</td>
+                  <td>{{ referral.latitude}}, {{ referral.longitude }}</td>
+                  <td>{{ referral.sender }}</td>
+                  <td>{{ referral.extrainfo }}</td>
+
+                </tr>
+              {% endfor %}
+          </tbody>
+        </table>
+        </br>
+        <div class="center">
+          <a class="btn btn-large waves-effect indigo" href="{% url 'download_csv' %}">Download as CSV</a>
+        </div>
+
+    <!--Import jQuery before materialize.js-->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="{% static "js/materialize.min.js" %}"></script>
 </body>
 </html>

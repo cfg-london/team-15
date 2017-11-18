@@ -17,7 +17,7 @@ class Referral(models.Model):
     longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True)
 
     def __str__(self):
-        return self.sender + ' referred ' + self.name# + ' for ' + self.category + ' issues.'
+        return self.sender + ' referred ' + self.name
 
 class Category(models.Model):
     name = models.CharField(max_length=50)

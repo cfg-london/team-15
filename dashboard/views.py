@@ -17,7 +17,10 @@ from django.contrib.auth.decorators import login_required
 def dashboard(request):
     referrals_dict = dict()
     referrals_dict["refs"] = Referral.objects.all() \
-            .order_by('urgency', '-date')
+            .order_by('-urgency', '-date')
+    referrals_dict["categories"] = []
+    for i in range(len(referrals_dict["refs"])):
+        referrals_dict["categories"].append(referrals_dict["refs"][i].category_set.all())
     return render(request, "dashboard/dash.html", referrals_dict)
 
 
@@ -38,7 +41,7 @@ def download_csv(request):
         for category in entry.category_set.all():
             csvwriter.writerow([entry.sender, entry.name, entry.phone,
                                 entry.urgency, category.name,  entry.date,
-                                str(entry.latitude) + ',' + str(entry.longitude), 
+                                str(entry.latitude) + ',' + str(entry.longitude),
                                 entry.extrainfo])
 
     response = HttpResponse(csvfile.getvalue(), content_type='text/csv')

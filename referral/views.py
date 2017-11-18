@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import redirect, render
 from django.core import serializers
+from django.core.mail import send_mail
 
 import json
 
@@ -33,12 +34,12 @@ def add_referral(request):
     if 'latitude' in data.keys():
         latitude = data['latitude']
     else:
-        latitude = ''
+        latitude = 0
 
     if 'longitude' in data.keys():
         longitude = data['longitude']
     else:
-        longitude = ''
+        longitude = 0
 
     category = Category(name=category_name)
     category.save()
@@ -48,6 +49,19 @@ def add_referral(request):
     referral.save()
 
     category.referrals.add(referral)
+
+    subject = ''
+    if urgency:
+        subject = subject + '[URGENT!] '
+    subject = subject + 'Someone needs help!'
+
+    body = name + '(' + phone + ') ' + 'needs help for ' + category_name + ' reasons. He was referred by ' \
+        + sender + '.'
+
+    if latitude != '':
+        body = body + ' His location is ('  + str(latitude) + ', ' + str(longitude) + ').'
+
+    send_mail(subject, body, 'code4bants@gmail.com', ['e.pattie@warwick.ac.uk'])
 
     return HttpResponse(json.dumps(data))
 
