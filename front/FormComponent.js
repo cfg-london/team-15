@@ -6,7 +6,8 @@ class FormComponent extends React.Component {
     super();
     this.state = {urgency: 0,
                   show: '',
-                  specifics: ''};
+                  specifics: '',
+                  buttons: ''};
     this.makeUrg = this.makeUrg.bind(this);
     this.makeLong = this.makeLong.bind(this);
     this.pickHealth = this.pickHealth.bind(this);
@@ -19,7 +20,7 @@ class FormComponent extends React.Component {
 
   pickHealth(){
     this.setState({specifics: (<div>
-        <select>
+        <select name='subtype'>
           <option value='Falls'>Falls</option>
           <option value='Medication'>Medication or Prescription</option>
           <option value='GP/Hospital'>Getting to GP/Hospital</option>
@@ -31,36 +32,63 @@ class FormComponent extends React.Component {
 
   pickSocial(){
     this.setState({specifics: (<div>
-      Can you go out?
-      <select name='goOut'>
-        <option value='true'> Yes</option>
-        <option value='false'> No</option>
+      <select name='subtype'>
+        <option value='Suicide'>Potential Suicide</option>
+        <option value='Friends'>No friends</option>
+        <option value='Lost family'>Lost family</option>
       </select>
       </div>)});
   }
 
   pickLegal(){
     this.setState({specifics: (<div>
+      <select name='subtype'>
+        <option value='Housing'>Housing</option>
+        <option value='Employment'>Employment</option>
+        <option value='Welfare'>Welfare Benefits</option>
+        <option value='Consumer'>Consumer</option>
+        <option value='Immigration'>Immigration</option>
+        <option value='Scams'>Scams and Rogue Traders</option>
+      </select>
       </div>)});
   }
 
   pickCrisis(){
     this.setState({specifics: (<div>
+      What is the crisis? <input type='text' />
       </div>)});
   }
 
   pickFuture(){
     this.setState({specifics: (<div>
+      <select name='subtype'>
+        <option value='Will'>Make a will</option>
+        <option value='Funeral'>Planning and paying funerals</option>
+        <option value='Equity'>Equity release</option>
+        <option value='PayForCare'>Paying care</option>
+      </select>
       </div>)});
   }
 
   pickDomestic(){
     this.setState({specifics: (<div>
+      <select name='subtype'>
+        <option value='Repairs'>Repairs</option>
+        <option value='Neighbours'>Nuisance neighbours</option>
+        <option value='Council issues'>Coucil issues</option>
+        <option value='Adaptations'>Adaptations</option>
+      </select>
       </div>)});
   }
 
   pickFinancial(){
     this.setState({specifics: (<div>
+      <select name='subtype'>
+        <option value='Debt'>Debt</option>
+        <option value='Cards'>Credit cards arrears</option>
+        <option value='CouncilTax'>Coucil tax arrears</option>
+        <option value='Pensions'>Pensions</option>
+      </select>
       </div>)});
   }
 
@@ -70,10 +98,10 @@ class FormComponent extends React.Component {
        (<div>
         <div>
           <div>
-          Who ? <input type='text' name='who'/>
+          Who has the problem? <input type='text' name='who'/>
           </div>
           <div>
-          Contact <input type='text' name='phone' />
+          Their contact <input type='text' name='phone' />
           </div>
         </div>
         <div>
@@ -123,19 +151,29 @@ class FormComponent extends React.Component {
        <input type='radio' name='type' value='Future' onChange={this.pickFuture} /> Later Life Planning
        <input type='radio' name='type' value='Domestic' onChange={this.pickDomestic} /> Domestic Assistance
        <input type='radio' name='type' value='Financial' onChange={this.pickFinancial} /> Money and Benefits
-       <div>
-        Specifics (optional) <input type='text'/>
-       </div>
       </div>
   </div>) });
   }
 
    render() {
 
+     let buttons = (this.state.urgency == 0) ? (<div>
+       <h2>
+                     What seems to be the problem?
+                   </h2>
+                   <button style={{height: 'auto'}} onClick={this.makeUrg} className="button button-xl button-block error position-center">
+                     <i className="fa fa-2x fa-exclamation-circle" aria-hidden="true"></i>
+                     <p> Someone needs urgent help </p>
+                   </button>
+                   <br />
+                   <button style={{height: 'auto'}} onClick={this.makeLong} className="button button-xl warn button-block info">
+                   <i className="fa fa-2x fa-handshake-o" aria-hidden="true"></i>
+                     <p> Someone needs help </p>
+                   </button>     </div>) : '';
+
        return (
          <div>
-          <input type="radio" name="urgent" onChange={this.makeUrg} /> URGENT
-          <input type="radio" name="urgent" onChange={this.makeLong}/> IMMEDIATE ATTENTION
+         {buttons}
           <form action='/api/referral/add' method='POST'>
           {this.state.show}
           {this.state.specifics}
