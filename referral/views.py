@@ -4,6 +4,8 @@ from __future__ import unicode_literals
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import redirect, render
+from django.core import serializers
+
 import json
 
 from .models import Referral, Category
@@ -27,5 +29,11 @@ def add_referral(request):
     referral.save()
 
     category.referrals.add(referral)
+
+    return HttpResponse(json.dumps(data))
+
+def get_popular_categories(request):
+    popular_categories = Category.objects.annotate(r_count=Count('referrals')).order_by('-r_count')
+    data = serializers.serialize('json', popular_categories, fields=('name'))
 
     return HttpResponse(json.dumps(data))
