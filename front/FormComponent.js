@@ -1,6 +1,8 @@
 import React from 'react';
 import LocationComponent from './LocationComponent.js';
 import {geolocated} from 'react-geolocated';
+import { Steps } from 'antd';
+const Step = Steps.Step;
 
 class FormComponent extends React.Component {
 
@@ -11,6 +13,7 @@ class FormComponent extends React.Component {
                   location: '',
                   latitude: '',
                   longitude: '',
+                  step: 0,
                   specifics: ''};
     this.makeUrg = this.makeUrg.bind(this);
     this.makeLong = this.makeLong.bind(this);
@@ -22,10 +25,56 @@ class FormComponent extends React.Component {
     this.pickFinancial = this.pickFinancial.bind(this);
     this.storeLocation = this.storeLocation.bind(this);
     this.updateLocation = this.updateLocation.bind(this);
+    this.increaseStep1 = this.increaseStep1.bind(this);
+    this.increaseStep2 = this.increaseStep2.bind(this);
+    this.decreaseStep0 = this.decreaseStep0.bind(this);
+    this.decreaseStep1 = this.decreaseStep1.bind(this);
   }
 
   storeLocation() {
     this.setState({location: <LocationComponent updateForm={this.updateLocation} />});
+  }
+
+  increaseStep1(e){
+    e.preventDefault();
+    this.setState({step: 1});
+    this.setState({show:
+      (<div>
+       <input type='radio' name='type' value='Health' /> Health
+       <input type='radio' name='type' value='Social' /> Social Isolation
+       <input type='radio' name='type' value='Legal' /> Legal
+       <input type='radio' name='type' value='Crisis' /> Crisis
+       <input type='radio' name='type' value='Future' /> Later Life Planning
+       <input type='radio' name='type' value='Domestic' /> Domestic Assistance
+       <input type='radio' name='type' value='Financial' /> Money and Benefits
+       <input type='text' name='type' value='Other' />
+       <div>
+        Specifics (optional) <input type='text' onChange={this.increaseStep2}/>
+       </div>
+       <button onClick={this.increaseStep2} className='button-block'>Next</button>
+       </div>)});
+  }
+
+  decreaseStep0(e){
+    e.preventDefault();
+    this.setState({step: 0});
+  }
+
+  increaseStep2(e){
+    e.preventDefault();
+    this.setState({step: 2});
+    this.setState({show: (<div>
+    <div>
+    <input type='checkbox' onChange={this.storeLocation}/>Share location
+    </div>
+    <input type='checkbox' required /> Consent to LinkAge+
+    <input type='submit' value='Send' />
+   </div>)});
+  }
+
+  decreaseStep1(e){
+    e.preventDefault();
+    thi.setState({step: 1});
   }
 
   updateLocation(lat, long) {
@@ -109,33 +158,20 @@ class FormComponent extends React.Component {
 
   makeUrg() {
     this.setState({urgency: 1});
+    if(this.state.step == 0)
     this.setState({show:
-       (<div>
-        <div>
-          <div>
-          Who has the problem? <input type='text' name='who' required />
-          </div>
-          <div>
-          Their contact <input type='text' name='phone' required />
-          </div>
-        </div>
-        <div>
-         <input type='radio' name='type' value='Health' /> Health
-         <input type='radio' name='type' value='Social' /> Social Isolation
-         <input type='radio' name='type' value='Legal' /> Legal
-         <input type='radio' name='type' value='Crisis' /> Crisis
-         <input type='radio' name='type' value='Future' /> Later Life Planning
-         <input type='radio' name='type' value='Domestic' /> Domestic Assistance
-         <input type='radio' name='type' value='Financial' /> Money and Benefits
-         <input type='text' name='type' value='Other' />
+       (
          <div>
-          Specifics (optional) <input type='text'/>
-         </div>
-         <div>
-         <input type='checkbox' onChange={this.storeLocation}/>Share location
-         </div>
-        </div>
-    </div>) });
+          <div>
+            <div>
+              Who has the problem? <input type='text' name='who' required />
+            </div>
+            <div>
+              Their contact <input type='text' name='phone' required onChange={this.increaseStep1}/>
+            </div>
+          </div>
+          <button onClick={this.increaseStep1} className='button-block'> Next</button>
+         </div>)});
   }
 
   makeLong() {
@@ -178,6 +214,8 @@ class FormComponent extends React.Component {
       <div>
       <input type='checkbox' onChange={this.storeLocation}/>Share location
       </div>
+      <input type='checkbox' required /> Consent to LinkAge+
+      <input type='submit' value='Send' />
   </div>) });
   }
 
@@ -197,15 +235,23 @@ class FormComponent extends React.Component {
                      <p> Someone needs help </p>
                    </button>     </div>) : '';
 
-    let form = (this.state.urgency != 0 ) ? (<form action='/api/referral/add' method='POST'>
+    let ssteps = (this.state.urgency == 1) ?
+    <Steps current={this.state.step} >
+    <Step title="Person" description="Add the details" />
+    <Step title="Problem" description="Describe the problem" />
+    <Step title="Finishing" description="Location and consent" />
+    </Steps> : '';
+
+    let form = (this.state.urgency != 0 ) ? (
+      <div>
+      {ssteps}
+    <form action='/api/referral/add' method='POST'>
     {this.state.show}
     {this.state.specifics}
     <input type='hidden' name='urgent' value={(this.state.urgency==1)} />
     <input type='hidden' name='latitude' value={this.state.latitude} />
     <input type='hidden' name='longitude' value={this.state.longitude} />
-    <input type='checkbox' required /> Consent to LinkAge+
-    <input type='submit' value='Send' />
-   </form>) : '';
+   </form></div>) : '';
 
        return (
 
