@@ -18,7 +18,9 @@ class FormComponent extends React.Component {
                   latitude: '',
                   longitude: '',
                   step: 0,
-                  specifics: ''};
+                  specifics: '',
+                  submitDisabled: 0,
+                  buttons: []};
     this.makeUrg = this.makeUrg.bind(this);
     this.makeLong = this.makeLong.bind(this);
     this.pickHealth = this.pickHealth.bind(this);
@@ -27,13 +29,21 @@ class FormComponent extends React.Component {
     this.pickFuture = this.pickCrisis.bind(this);
     this.pickDomestic = this.pickDomestic.bind(this);
     this.pickFinancial = this.pickFinancial.bind(this);
-    
+    this.storeLocation = this.storeLocation.bind(this);
+    this.updateLocation = this.updateLocation.bind(this);
+    this.increaseStep1 = this.increaseStep1.bind(this);
+    this.increaseStep2 = this.increaseStep2.bind(this);
+    this.decreaseStep0 = this.decreaseStep0.bind(this);
+    this.decreaseStep1 = this.decreaseStep1.bind(this);
     this.probTypeHandler = this.probTypeHandler.bind(this);
     this.onSubmitHandler = this.onSubmitHandler.bind(this);
+
   }
 
   // If component mounts, set all buttons to the activated state.
   componentDidMount(){
+
+
 
   }
 
@@ -50,51 +60,66 @@ class FormComponent extends React.Component {
 
   onSubmitHandler(){
 
-
-
     // Create the secret inputs.
     this.setState({
       problemField: (
         <input type="checkbox" name="problem" value={this.state.activeButton} />
       )
-    })
-    
-    this.storeLocation = this.storeLocation.bind(this);
-    this.updateLocation = this.updateLocation.bind(this);
-    this.increaseStep1 = this.increaseStep1.bind(this);
-    this.increaseStep2 = this.increaseStep2.bind(this);
-    this.decreaseStep0 = this.decreaseStep0.bind(this);
-    this.decreaseStep1 = this.decreaseStep1.bind(this);
+    });
+
   }
 
   storeLocation() {
-    this.setState({location: <LocationComponent updateForm={this.updateLocation} />});
+
+    console.log(this.state.submitDisabled);
+    this.setState({submitDisabled: 1});
+    this.setState({
+      location: <LocationComponent updateForm={this.updateLocation} />
+    });
+
+  }
+
+
+  getButtons(){
+
+    // Get all buttons
+   this.setState({buttons:
+      this.props.probTypes.map(prob => {
+       return (
+         <ProblemRadio
+           key={prob.title}
+           title={prob.title}
+           iconCode={prob.iconCode}
+         />
+       );
+     })});
   }
 
   increaseStep1(e){
-    
-     // Get all buttons
-    var buttons = this.props.probTypes.map(prob => {
-        return (
-          <ProblemRadio
-            key={prob.title}
-            title={prob.title}
-            iconCode={prob.iconCode}
-          />
-        );
-      });
-    
+
     e.preventDefault();
+
+    let buttons = this.props.probTypes.map(prob => {
+     return (
+       <ProblemRadio
+         key={prob.title}
+         title={prob.title}
+         iconCode={prob.iconCode}
+       />
+     );
+   });
+
+    //  var buttons = this.state.buttons;
     this.setState({step: 1});
     this.setState({show:
       (<div>
-       
-        <div className="probTypes-container">
-          {buttons}
+
+        <div className="probTypes-contafiner">
+        {buttons}
         </div>
-       
+
        <div>
-        Specifics (optional) <input type='text' onChange={this.increaseStep2}/>
+        Specifics (optional) <input type='text'/>
        </div>
        <button onClick={this.increaseStep2} className='button-block'>Next</button>
        </div>)});
@@ -110,12 +135,13 @@ class FormComponent extends React.Component {
     this.setState({step: 2});
     this.setState({show: (<div>
     <div>
-                          
-     <div>
-                          
+
+     <div >
+
       Anything else we should know?
        <input placeholder="E.g. Ran out of medication" type='text'/>
-        </div>
+       </div>
+
         <label className="control switch success">
         <span className="control-label small">
           *I consent to the forwarding of this data to TOYNBE HALL.
@@ -123,11 +149,17 @@ class FormComponent extends React.Component {
           <input type="checkbox" name="checkbox" />
           <span className="control-indicator"></span>
         </label>
-                          
-    <input type='checkbox' onChange={this.storeLocation}/>Share location
+
+        <label className="control switch success">
+        <span className="control-label small">
+          (Optional) Share your location.
+        </span>
+        <input type='checkbox' onChange={this.storeLocation}/>
+          <span className="control-indicator"></span>
+        </label>
+
     </div>
-    <input type='checkbox' required /> Consent to LinkAge+
-    <input type='submit' value='Send' />
+    <input disabled={this.state.submitDisabled === 0 ? false : true} type='submit' value='Send' />
    </div>)});
   }
 
@@ -222,18 +254,19 @@ class FormComponent extends React.Component {
     this.setState({show:
        (
          <div>
-          <div>       
+          <div>
         <div>
           <div>
           Who are we worried about? <input placeholder="John Smith" type='text' required name='who'/>
           </div>
           <div>
-          How can we reach this person? <input placeholder="+44 123 456 7890" type='text' name='phone' required onChange={this.increaseStep1} />
+          How can we reach this person? <input placeholder="+44 123 456 7890" type='text' name='phone' required />
           </div>
         </div>
           </div>
           <button onClick={this.increaseStep1} className='button-block'> Next</button>
-         </div>)});
+         </div>)
+       });
   }
 
   makeLong() {
@@ -283,10 +316,14 @@ class FormComponent extends React.Component {
 
    render() {
 
+     if(this.state.latitude!==''){
+       this.stetState({disabledSubmit: 0});
+     }
+
      let buttons = (this.state.urgency == 0) ? (
                  <div>
-                     What seems to be the problem?
                      <h2>
+                     What seems to be the problem?
                    </h2>
                    <button style={{height: 'auto'}} onClick={this.makeUrg} className="button button-xl button-block error position-center">
                      <i className="fa fa-2x fa-exclamation-circle" aria-hidden="true"></i>
