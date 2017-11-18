@@ -34,11 +34,9 @@
                   <td>{{ referral.name }}</td>
                   <td>{{ referral.phone }}</td>
                   <td>
-                    {% for category_set in categories %}
-                      {% for category in category_set %}
-                        {{ category.name }} </br>
+                      {% for cat in referral.category_set.all %}
+                        {{cat.name}}
                       {% endfor %}
-                    {% endfor %}
                   </td>
                   <td>{{ referral.date }}</td>
                   <td>{{ referral.latitude}}, {{ referral.longitude }}</td>
