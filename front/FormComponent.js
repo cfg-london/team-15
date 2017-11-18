@@ -1,4 +1,6 @@
 import React from 'react';
+import LocationComponent from './LocationComponent.js';
+import {geolocated} from 'react-geolocated';
 
 class FormComponent extends React.Component {
 
@@ -6,8 +8,10 @@ class FormComponent extends React.Component {
     super();
     this.state = {urgency: 0,
                   show: '',
-                  specifics: '',
-                  buttons: ''};
+                  location: '',
+                  latitude: '',
+                  longitude: '',
+                  specifics: ''};
     this.makeUrg = this.makeUrg.bind(this);
     this.makeLong = this.makeLong.bind(this);
     this.pickHealth = this.pickHealth.bind(this);
@@ -16,6 +20,17 @@ class FormComponent extends React.Component {
     this.pickFuture = this.pickCrisis.bind(this);
     this.pickDomestic = this.pickDomestic.bind(this);
     this.pickFinancial = this.pickFinancial.bind(this);
+    this.storeLocation = this.storeLocation.bind(this);
+    this.updateLocation = this.updateLocation.bind(this);
+  }
+
+  storeLocation() {
+    this.setState({location: <LocationComponent updateForm={this.updateLocation} />});
+  }
+
+  updateLocation(lat, long) {
+    this.setState({latitude: lat});
+    this.setState({longitude: long});
   }
 
   pickHealth(){
@@ -98,10 +113,10 @@ class FormComponent extends React.Component {
        (<div>
         <div>
           <div>
-          Who has the problem? <input type='text' name='who'/>
+          Who has the problem? <input type='text' name='who' required />
           </div>
           <div>
-          Their contact <input type='text' name='phone' />
+          Their contact <input type='text' name='phone' required />
           </div>
         </div>
         <div>
@@ -112,8 +127,12 @@ class FormComponent extends React.Component {
          <input type='radio' name='type' value='Future' /> Later Life Planning
          <input type='radio' name='type' value='Domestic' /> Domestic Assistance
          <input type='radio' name='type' value='Financial' /> Money and Benefits
+         <input type='text' name='type' value='Other' />
          <div>
           Specifics (optional) <input type='text'/>
+         </div>
+         <div>
+         <input type='checkbox' onChange={this.storeLocation}/>Share location
          </div>
         </div>
     </div>) });
@@ -126,21 +145,24 @@ class FormComponent extends React.Component {
       <div>
         <div>
         Your function:
-        <select>
+        <select name='function'>
           <option value='police'>Police</option>
           <option value='family'>Family member</option>
           <option value='doctor'>Doctor</option>
           <option value='volunteer'>Volunteer</option>
+          <option value='firefighter'>Fire Fighter</option>
+          <option value='socialworker'>Social Worker</option>
+          <option value='other' >Other</option>
         </select>
         </div>
         <div>
-        Who has the problem? <input type='text' name='who'/>
+        Who has the problem? <input type='text' name='who' required />
         </div>
         <div>
-        Their contact: <input type='text' name='phone' />
+        Their contact: <input type='text' name='phone' required />
         </div>
         <div>
-        Their address: <input type='text' name='address' />
+        Their address: <input type='text' name='address' required />
         </div>
       </div>
       <div>
@@ -151,6 +173,10 @@ class FormComponent extends React.Component {
        <input type='radio' name='type' value='Future' onChange={this.pickFuture} /> Later Life Planning
        <input type='radio' name='type' value='Domestic' onChange={this.pickDomestic} /> Domestic Assistance
        <input type='radio' name='type' value='Financial' onChange={this.pickFinancial} /> Money and Benefits
+       <input type='text' name='type' placeholder='Other' />
+      </div>
+      <div>
+      <input type='checkbox' onChange={this.storeLocation}/>Share location
       </div>
   </div>) });
   }
@@ -158,8 +184,8 @@ class FormComponent extends React.Component {
    render() {
 
      let buttons = (this.state.urgency == 0) ? (<div>
-       <h2>
                      What seems to be the problem?
+                     <h2>
                    </h2>
                    <button style={{height: 'auto'}} onClick={this.makeUrg} className="button button-xl button-block error position-center">
                      <i className="fa fa-2x fa-exclamation-circle" aria-hidden="true"></i>
@@ -171,15 +197,22 @@ class FormComponent extends React.Component {
                      <p> Someone needs help </p>
                    </button>     </div>) : '';
 
+    let form = (this.state.urgency != 0 ) ? (<form action='/api/referral/add' method='POST'>
+    {this.state.show}
+    {this.state.specifics}
+    <input type='hidden' name='urgent' value={(this.state.urgency==1)} />
+    <input type='hidden' name='latitude' value={this.state.latitude} />
+    <input type='hidden' name='longitude' value={this.state.longitude} />
+    <input type='checkbox' required /> Consent to LinkAge+
+    <input type='submit' value='Send' />
+   </form>) : '';
+
        return (
 
          <div>
          {buttons}
-          <form action='/api/referral/add' method='POST'>
-          {this.state.show}
-          {this.state.specifics}
-          <input type='submit' value='Send' />
-         </form>
+         {form}
+         {this.state.location}
          </div>
        );
    }
