@@ -20,7 +20,7 @@ ul
 li
 {
     line-height: 2;
-    font-family: sans-serif;
-    font-weight: lighter;
-    font-size: 18px;
+    font-family: monospace;
+    font-weight: 100;
+    font-size: 14px;
 }
