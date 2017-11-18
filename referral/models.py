@@ -12,7 +12,7 @@ class Referral(models.Model):
     phone = models.CharField(max_length=12)
     urgency = models.BooleanField()
     date = models.DateTimeField(default=datetime.now, blank=True)
-    extrainfo = models.CharField(max_length=100)
+    extrainfo = models.CharField(null=True, max_length=100)
     latitude = models.DecimalField(null=True, max_digits=9, decimal_places=6)
     longitude = models.DecimalField(null=True, max_digits=9, decimal_places=6)
 

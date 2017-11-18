@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.shortcuts import
+from django.http import HttpResponse
 
-from .referral.models import Referral
+from referral.models import Referral
 
 import cStringIO as StringIO
 import csv
@@ -17,8 +17,10 @@ def csv(request):
         # Initialise the csv writer
         csvfile = StringIO.StringIO()
         csvwriter = csv.writer(csvfile)
-        csvwriter.writerow(["Sender", "Vulnerable adult's name", "Phone number",
-                            "Urgent", "Category", "Date", "Location", "Extra info"])
+
+        # Write column names
+        csvwriter.writerow([u"Sender", u"Vulnerable adult's name", u"Phone number",
+                            u"Urgent", u"Category", u"Date", u"Location", u"Extra info"])
 
         for entry in referrals:
             csvwriter.writerow([entry.sender, entry.name, entry.phone,
@@ -27,6 +29,8 @@ def csv(request):
 
         yield csvfile.getvalue()
 
-    response = HttpResponse(data(), mimetype="text/csv")
+    response = HttpResponse(content_type='text/csv')
     response["Content-Disposition"] = "attachment; filename=data.csv"
+
+    data()
     return response
