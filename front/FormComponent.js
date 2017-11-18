@@ -2,12 +2,15 @@ import React from 'react';
 
 class FormComponent extends React.Component {
 
+  // Take the buttons in as a give prop.
+
   constructor() {
     super();
     this.state = {urgency: 0,
                   show: '',
                   specifics: '',
-                  buttons: ''};
+                  activatedButtons: []
+                };
     this.makeUrg = this.makeUrg.bind(this);
     this.makeLong = this.makeLong.bind(this);
     this.pickHealth = this.pickHealth.bind(this);
@@ -16,6 +19,31 @@ class FormComponent extends React.Component {
     this.pickFuture = this.pickCrisis.bind(this);
     this.pickDomestic = this.pickDomestic.bind(this);
     this.pickFinancial = this.pickFinancial.bind(this);
+
+    this.probTypeHandler = this.probTypeHandler.bind(this);
+  }
+
+  // If component mounts, set all buttons to the activated state.
+  componentDidMount(){
+
+    var probTitles = [];
+
+    // Create the prob Titles array from props passed into Form component.
+    this.props.probTypes.forEach(prob => {
+      probTitles.push(prob.title);
+    });
+
+    // Set all buttons to activated at first.
+    this.setState({
+      activatedButtons: this.props.probTypes
+    });
+  }
+
+  probTypeHandler(event){
+    event.preventDefault(); // Prevent the form from being submitted.
+
+    // When we click a given element, we want to disable all the rest.s
+
   }
 
   pickHealth(){
@@ -93,28 +121,40 @@ class FormComponent extends React.Component {
   }
 
   makeUrg() {
+
+    // Get all buttons
+    var buttons = this.props.probTypes.map(prob => {
+        return (
+          <ProblemButton
+            title={prob.title}
+            iconCode={prob.iconCode}
+            clickHandler={this.probTypeHandler}
+          />
+        );
+      });
+
     this.setState({urgency: 1});
     this.setState({show:
        (<div>
+
+         <h2> Urgent Referral Request </h2>
+         <p> Enter the details below and we'll assess the situation as soon as we can. </p>
+
         <div>
           <div>
-          Who has the problem? <input type='text' name='who'/>
+          Who are we worried about? <input placeholder="John Smith" type='text' name='who'/>
           </div>
           <div>
-          Their contact <input type='text' name='phone' />
+          How can we reach this person? <input placeholder="+44 123 456 7890" type='text' name='phone' />
           </div>
         </div>
+
+        <div className="probTypes-container">
+          {buttons}
+        </div>
         <div>
-         <input type='radio' name='type' value='Health' /> Health
-         <input type='radio' name='type' value='Social' /> Social Isolation
-         <input type='radio' name='type' value='Legal' /> Legal
-         <input type='radio' name='type' value='Crisis' /> Crisis
-         <input type='radio' name='type' value='Future' /> Later Life Planning
-         <input type='radio' name='type' value='Domestic' /> Domestic Assistance
-         <input type='radio' name='type' value='Financial' /> Money and Benefits
-         <div>
-          Specifics (optional) <input type='text'/>
-         </div>
+         Anything else we should know?
+         <input placeholder="E.g. Ran out of medication" type='text'/>
         </div>
     </div>) });
   }
@@ -178,11 +218,37 @@ class FormComponent extends React.Component {
           <form action='/api/referral/add' method='POST'>
           {this.state.show}
           {this.state.specifics}
-          <input type='submit' value='Send' />
+          <input type='submit' value='Submit Referral' />
          </form>
          </div>
        );
    }
+}
+
+// Pass in a problem type handler as a prop to this component.
+//
+/**
+ * Takes in a iconCode & problem name as props and returns the button.
+ * Also takes in a problem type handler which will be defined by the
+ * parent container and passed to it as a prop.
+ * @type {Object}
+ */
+class ProblemButton extends React.Component {
+
+  render(){
+
+    return (
+
+      <button className="probType-button" onClick={this.props.clickHandler.bind(this)} className="button button-pill">
+        <i style={{marginRight: '5px'}} className={"fa " + this.props.iconCode} aria-hidden="true"></i>
+         {this.props.title}
+      </button>
+
+
+    );
+
+  }
+
 }
 
 export default FormComponent;
