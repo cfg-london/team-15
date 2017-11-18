@@ -51,10 +51,23 @@ class FormComponent extends React.Component {
    render() {
 
        return (
-         <div>
-          <input type="radio" name="urgent" onChange={this.makeUrg} /> URGENT
-          <input type="radio" name="urgent" onChange={this.makeLong}/> IMMEDIATE ATTENTION
-          {this.state.show}
+         <div className="pre-flow-selector-wrap">
+
+            <h2>
+              What seems to be the problem?
+            </h2>
+            <button style={{height: 'auto'}} onClick={this.makeUrg} className="button button-xl button-block error position-center">
+              <i className="fa fa-2x fa-exclamation-circle" aria-hidden="true"></i>
+              <p> Someone needs urgent help </p>
+            </button>
+            <br />
+            <button style={{height: 'auto'}} onClick={this.makeLong} className="button button-xl warn button-block info">
+            <i className="fa fa-2x fa-handshake-o" aria-hidden="true"></i>
+              <p> Someone needs help </p>
+            </button>
+
+            {this.state.show}
+
          </div>
        );
    }
