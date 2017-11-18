@@ -17,18 +17,18 @@ class Referral(models.Model):
     longitude = models.DecimalField(null=True, max_digits=9, decimal_places=6)
 
     def __str__(self):
-        return sender + ' referred ' + name + ' for ' + category + ' issues.'
+        return self.sender + ' referred ' + self.name
 
 class Category(models.Model):
     name = models.CharField(max_length=50)
     referrals = models.ManyToManyField(Referral)
 
     def __str__(self):
-        return name
+        return self.name
 
 class Subcategory(models.Model):
     name = models.CharField(max_length=50)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
     def __str__(self):
-        return name + ' is a subcategory of ' + category.name
+        return self.name + ' is a subcategory of ' + self.category.name
