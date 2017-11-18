@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DashBoard</title>
+</head>
+<body>
+    <h1>The DashBoard</h1>
+    <ul>
+    {% for referral in refs %}
+        <li>{{referral.sender}},{{referral.name}},{{referral.phone}},{{referral.urgency}},{{referral.date}}</li>
+    {% endfor %}
+    </ul>
+</body>
+</html>

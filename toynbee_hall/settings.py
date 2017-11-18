@@ -52,6 +52,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'toynbee_hall.urls'
+LOGIN_REDIRECT_URL = '/dashboard/'
 
 TEMPLATES = [
     {
