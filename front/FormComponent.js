@@ -6,10 +6,14 @@ const Step = Steps.Step;
 
 class FormComponent extends React.Component {
 
+  // Take the buttons in as a give prop.
+
   constructor() {
     super();
     this.state = {urgency: 0,
                   show: '',
+                  problemField: '',
+                  activeButton: '',
                   location: '',
                   latitude: '',
                   longitude: '',
@@ -23,6 +27,38 @@ class FormComponent extends React.Component {
     this.pickFuture = this.pickCrisis.bind(this);
     this.pickDomestic = this.pickDomestic.bind(this);
     this.pickFinancial = this.pickFinancial.bind(this);
+    
+    this.probTypeHandler = this.probTypeHandler.bind(this);
+    this.onSubmitHandler = this.onSubmitHandler.bind(this);
+  }
+
+  // If component mounts, set all buttons to the activated state.
+  componentDidMount(){
+
+  }
+
+  probTypeHandler(event){
+
+    event.preventDefault(); // Prevent the form from being submitted.
+
+    // When we click a given element, we want to disable all the rest.
+    this.setState({
+      activeButton: event.target.innerText
+    });
+
+  }
+
+  onSubmitHandler(){
+
+
+
+    // Create the secret inputs.
+    this.setState({
+      problemField: (
+        <input type="checkbox" name="problem" value={this.state.activeButton} />
+      )
+    })
+    
     this.storeLocation = this.storeLocation.bind(this);
     this.updateLocation = this.updateLocation.bind(this);
     this.increaseStep1 = this.increaseStep1.bind(this);
@@ -36,18 +72,27 @@ class FormComponent extends React.Component {
   }
 
   increaseStep1(e){
+    
+     // Get all buttons
+    var buttons = this.props.probTypes.map(prob => {
+        return (
+          <ProblemRadio
+            key={prob.title}
+            title={prob.title}
+            iconCode={prob.iconCode}
+          />
+        );
+      });
+    
     e.preventDefault();
     this.setState({step: 1});
     this.setState({show:
       (<div>
-       <input type='radio' name='type' value='Health' /> Health
-       <input type='radio' name='type' value='Social' /> Social Isolation
-       <input type='radio' name='type' value='Legal' /> Legal
-       <input type='radio' name='type' value='Crisis' /> Crisis
-       <input type='radio' name='type' value='Future' /> Later Life Planning
-       <input type='radio' name='type' value='Domestic' /> Domestic Assistance
-       <input type='radio' name='type' value='Financial' /> Money and Benefits
-       <input type='text' name='type' value='Other' />
+       
+        <div className="probTypes-container">
+          {buttons}
+        </div>
+       
        <div>
         Specifics (optional) <input type='text' onChange={this.increaseStep2}/>
        </div>
@@ -65,6 +110,20 @@ class FormComponent extends React.Component {
     this.setState({step: 2});
     this.setState({show: (<div>
     <div>
+                          
+     <div>
+                          
+      Anything else we should know?
+       <input placeholder="E.g. Ran out of medication" type='text'/>
+        </div>
+        <label className="control switch success">
+        <span className="control-label small">
+          *I consent to the forwarding of this data to TOYNBE HALL.
+        </span>
+          <input type="checkbox" name="checkbox" />
+          <span className="control-indicator"></span>
+        </label>
+                          
     <input type='checkbox' onChange={this.storeLocation}/>Share location
     </div>
     <input type='checkbox' required /> Consent to LinkAge+
@@ -157,18 +216,21 @@ class FormComponent extends React.Component {
   }
 
   makeUrg() {
+
     this.setState({urgency: 1});
     if(this.state.step == 0)
     this.setState({show:
        (
          <div>
+          <div>       
+        <div>
           <div>
-            <div>
-              Who has the problem? <input type='text' name='who' required />
-            </div>
-            <div>
-              Their contact <input type='text' name='phone' required onChange={this.increaseStep1}/>
-            </div>
+          Who are we worried about? <input placeholder="John Smith" type='text' required name='who'/>
+          </div>
+          <div>
+          How can we reach this person? <input placeholder="+44 123 456 7890" type='text' name='phone' required onChange={this.increaseStep1} />
+          </div>
+        </div>
           </div>
           <button onClick={this.increaseStep1} className='button-block'> Next</button>
          </div>)});
@@ -221,7 +283,8 @@ class FormComponent extends React.Component {
 
    render() {
 
-     let buttons = (this.state.urgency == 0) ? (<div>
+     let buttons = (this.state.urgency == 0) ? (
+                 <div>
                      What seems to be the problem?
                      <h2>
                    </h2>
@@ -244,6 +307,8 @@ class FormComponent extends React.Component {
 
     let form = (this.state.urgency != 0 ) ? (
       <div>
+        <h2> Urgent Referral Request </h2>
+        <p> Enter the details below and we'll assess the situation as soon as we can. </p>
       {ssteps}
     <form action='/api/referral/add' method='POST'>
     {this.state.show}
@@ -263,5 +328,39 @@ class FormComponent extends React.Component {
        );
    }
 }
+
+// Pass in a problem type handler as a prop to this component.
+//
+/**
+ * Takes in a iconCode & problem name as props and returns the button.
+ * Also takes in a problem type handler which will be defined by the
+ * parent container and passed to it as a prop.
+ * @type {Object}
+ */
+class ProblemRadio extends React.Component {
+
+  render(){
+    return (
+
+      <span>
+        <label className="control radio">
+        <input type="radio" name="probType" />
+          <span className="control-indicator"></span>
+          <span className="control-label">
+          <i style={{marginRight: '10px'}} className={"fa "+this.props.iconCode} aria-hidden="true"></i>
+          {this.props.title}</span>
+        </label>
+      </span>
+
+
+    );
+
+  }
+
+}
+//
+// class ProblemRadio extends React.Component {
+//
+// }
 
 export default FormComponent;

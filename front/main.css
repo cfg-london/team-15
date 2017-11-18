@@ -44,3 +44,21 @@ footer > div.container > p {
     margin-bottom: 0;
 
 }
+
+button.probType-button {
+  /*min-width: 200px;*/
+}
+
+button.probType-button:focus {
+  color: white !important;
+  background-color: #ff9800 !important;
+}
+
+
+div.probTypes-container {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
