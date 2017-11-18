@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
 from django.http import HttpResponse
 
 from referral.models import Referral
@@ -8,8 +7,22 @@ from referral.models import Referral
 import cStringIO as StringIO
 import csv
 
+from django.shortcuts import render
+from referral.models import Referral
+from django.contrib.auth.decorators import login_required
+
 # Create your views here.
 
+@login_required
+def dashboard(request):
+    referrals_dict = dict()
+    referrals_dict["refs"] = Referral.objects.all() \
+            .order_by('urgency', '-date')
+    return render(request, "dashboard/dash.html", referrals_dict)
+
+
+# Create your views here.
+@login_required
 def download_csv(request):
     referrals = Referral.objects.all()
 
