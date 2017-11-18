@@ -9,8 +9,16 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "antd": "^2.13.10",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "patchkit-stepped-progress-bar": "^1.0.4",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
+    "react-geo-location": "0.0.0",
+    "react-geolocated": "^2.2.1",
+    "react-progress-steps": "0.0.8",
+    "react-stepzilla": "^4.6.3",
     "webpack": "^3.8.1",
     "webpack-dev-server": "^2.9.2"
   }
