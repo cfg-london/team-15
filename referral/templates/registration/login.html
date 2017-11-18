@@ -22,7 +22,11 @@
         <div class="container center">
           <div class="z-depth-1 grey lighten-4 row login-container">
 
-            <form class="col s12" method="post">
+            {% if form.errors %}
+              <p class="red-text">Invalid username or password! Please try again.</p>
+            {% endif %}
+
+            <form class="col s12" method="post" action="{% url 'login' %}">
               {% csrf_token %}
               <div class="row"></div>
 
