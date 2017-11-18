@@ -3,5 +3,5 @@ from . import views
 
 urlpatterns = [
         url(r'^accounts/', include('django.contrib.auth.urls')),
-        url(r'^csv/', views.csv, name='csv')
+        url(r'^csv/', views.download_csv, name='download_csv')
 ]
