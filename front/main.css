@@ -46,7 +46,12 @@ footer > div.container > p {
 }
 
 button.probType-button {
-  min-width: 200px;
+  /*min-width: 200px;*/
+}
+
+button.probType-button:focus {
+  color: white !important;
+  background-color: #ff9800 !important;
 }
 
 

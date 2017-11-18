@@ -9,7 +9,8 @@ class FormComponent extends React.Component {
     this.state = {urgency: 0,
                   show: '',
                   specifics: '',
-                  activatedButtons: []
+                  problemField: '',
+                  activeButton: '',
                 };
     this.makeUrg = this.makeUrg.bind(this);
     this.makeLong = this.makeLong.bind(this);
@@ -21,28 +22,35 @@ class FormComponent extends React.Component {
     this.pickFinancial = this.pickFinancial.bind(this);
 
     this.probTypeHandler = this.probTypeHandler.bind(this);
+    this.onSubmitHandler = this.onSubmitHandler.bind(this);
   }
 
   // If component mounts, set all buttons to the activated state.
   componentDidMount(){
 
-    var probTitles = [];
-
-    // Create the prob Titles array from props passed into Form component.
-    this.props.probTypes.forEach(prob => {
-      probTitles.push(prob.title);
-    });
-
-    // Set all buttons to activated at first.
-    this.setState({
-      activatedButtons: this.props.probTypes
-    });
   }
 
   probTypeHandler(event){
+
     event.preventDefault(); // Prevent the form from being submitted.
 
-    // When we click a given element, we want to disable all the rest.s
+    // When we click a given element, we want to disable all the rest.
+    this.setState({
+      activeButton: event.target.innerText
+    });
+
+  }
+
+  onSubmitHandler(){
+
+
+
+    // Create the secret inputs.
+    this.setState({
+      problemField: (
+        <input type="checkbox" name="problem" value={this.state.activeButton} />
+      )
+    })
 
   }
 
@@ -125,10 +133,10 @@ class FormComponent extends React.Component {
     // Get all buttons
     var buttons = this.props.probTypes.map(prob => {
         return (
-          <ProblemButton
+          <ProblemRadio
+            key={prob.title}
             title={prob.title}
             iconCode={prob.iconCode}
-            clickHandler={this.probTypeHandler}
           />
         );
       });
@@ -156,12 +164,12 @@ class FormComponent extends React.Component {
          Anything else we should know?
          <input placeholder="E.g. Ran out of medication" type='text'/>
         </div>
-        <label class="control switch success">
-        <span class="control-label small">
+        <label className="control switch success">
+        <span className="control-label small">
           *I consent to the forwarding of this data to TOYNBE HALL.
         </span>
           <input type="checkbox" name="checkbox" />
-          <span class="control-indicator"></span>
+          <span className="control-indicator"></span>
         </label>
         <input type='submit' value='Submit Referral' />
     </div>) });
@@ -223,8 +231,13 @@ class FormComponent extends React.Component {
 
          <div>
          {buttons}
-          <form action='54.194.5.169:8000/api/refferral/add' method='POST'>
+          <form
+            action='54.194.5.169:8000/api/refferral/add'
+            method='POST'
+            onSubmit={this.onSubmitHandler}
+          >
           {this.state.show}
+          {this.state.problemField}
           {this.state.specifics}
          </form>
          </div>
@@ -240,16 +253,20 @@ class FormComponent extends React.Component {
  * parent container and passed to it as a prop.
  * @type {Object}
  */
-class ProblemButton extends React.Component {
+class ProblemRadio extends React.Component {
 
   render(){
-
     return (
 
-      <button className="probType-button" onClick={this.props.clickHandler.bind(this)} className="button button-pill button-xl">
-        <i style={{marginRight: '5px'}} className={"fa " + this.props.iconCode} aria-hidden="true"></i>
-         {this.props.title}
-      </button>
+      <span>
+        <label className="control radio">
+        <input type="radio" name="probType" />
+          <span className="control-indicator"></span>
+          <span className="control-label">
+          <i style={{marginRight: '10px'}} className={"fa "+this.props.iconCode} aria-hidden="true"></i>
+          {this.props.title}</span>
+        </label>
+      </span>
 
 
     );
@@ -257,5 +274,9 @@ class ProblemButton extends React.Component {
   }
 
 }
+//
+// class ProblemRadio extends React.Component {
+//
+// }
 
 export default FormComponent;
