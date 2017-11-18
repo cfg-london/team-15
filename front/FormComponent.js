@@ -156,6 +156,14 @@ class FormComponent extends React.Component {
          Anything else we should know?
          <input placeholder="E.g. Ran out of medication" type='text'/>
         </div>
+        <label class="control switch success">
+        <span class="control-label small">
+          *I consent to the forwarding of this data to TOYNBE HALL.
+        </span>
+          <input type="checkbox" name="checkbox" />
+          <span class="control-indicator"></span>
+        </label>
+        <input type='submit' value='Submit Referral' />
     </div>) });
   }
 
@@ -215,10 +223,9 @@ class FormComponent extends React.Component {
 
          <div>
          {buttons}
-          <form action='/api/referral/add' method='POST'>
+          <form action='54.194.5.169:8000/api/refferral/add' method='POST'>
           {this.state.show}
           {this.state.specifics}
-          <input type='submit' value='Submit Referral' />
          </form>
          </div>
        );
@@ -239,7 +246,7 @@ class ProblemButton extends React.Component {
 
     return (
 
-      <button className="probType-button" onClick={this.props.clickHandler.bind(this)} className="button button-pill">
+      <button className="probType-button" onClick={this.props.clickHandler.bind(this)} className="button button-pill button-xl">
         <i style={{marginRight: '5px'}} className={"fa " + this.props.iconCode} aria-hidden="true"></i>
          {this.props.title}
       </button>
