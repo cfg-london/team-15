@@ -22,6 +22,7 @@ class FormComponent extends React.Component {
                   submitDisabled: 0,
                   buttons: []};
     this.makeUrg = this.makeUrg.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
     this.makeLong = this.makeLong.bind(this);
     this.pickHealth = this.pickHealth.bind(this);
     this.pickSocial = this.pickSocial.bind(this);
@@ -40,10 +41,53 @@ class FormComponent extends React.Component {
 
   }
 
+  handleSubmit(e) {
+    e.preventDefault();
+
+    var outputJSON = {};
+
+    $(e.target).serializeArray().forEach(item => {
+
+      outputJSON[item.name] = item.value;
+
+    });
+
+    console.log(outputJSON);
+
+    // Send a post request to the Django endpoint.
+    $.post('http://54.194.5.169:8000/api/referral/add', outputJSON);
+
+  }
+
   // If component mounts, set all buttons to the activated state.
   componentDidMount(){
 
+    $(document).ready(function(){
 
+      console.log("JQUERY LOADED");
+
+      setTimeout(function(){
+        $('form#mainForm').submit(e => {
+          e.preventDefault();
+
+
+          var outputJSON = {};
+
+          console.log($(this).serializeArray());
+
+          $(this).serializeArray().forEach(item => {
+
+            outputJSON[item.name] = item.value;
+
+          });
+
+          console.log(outputJSON);
+
+        });
+      }, 3000);
+
+
+    })
 
   }
 
@@ -97,7 +141,7 @@ class FormComponent extends React.Component {
 
   increaseStep1(e){
 
-    e.preventDefault();
+    // e.preventDefault();
 
     let buttons = this.props.probTypes.map(prob => {
      return (
@@ -119,9 +163,8 @@ class FormComponent extends React.Component {
         </div>
 
        <div>
-        Specifics (optional) <input type='text'/>
+        Specifics (optional) <input name="specifics" type='text'/>
        </div>
-       <button onClick={this.increaseStep2} className='button-block'>Next</button>
        </div>)});
   }
 
@@ -131,7 +174,7 @@ class FormComponent extends React.Component {
   }
 
   increaseStep2(e){
-    e.preventDefault();
+    // e.preventDefault();
     this.setState({step: 2});
     this.setState({show: (<div>
     <div>
@@ -139,14 +182,14 @@ class FormComponent extends React.Component {
      <div >
 
       Anything else we should know?
-       <input placeholder="E.g. Ran out of medication" type='text'/>
+       <input name="extra" placeholder="E.g. Ran out of medication" type='text'/>
        </div>
 
         <label className="control switch success">
         <span className="control-label small">
           *I consent to the forwarding of this data to TOYNBE HALL.
         </span>
-          <input type="checkbox" name="checkbox" />
+          <input name="consent" type="checkbox" name="checkbox" />
           <span className="control-indicator"></span>
         </label>
 
@@ -154,12 +197,12 @@ class FormComponent extends React.Component {
         <span className="control-label small">
           (Optional) Share your location.
         </span>
-        <input type='checkbox' onChange={this.storeLocation}/>
+        <input name="location" type='checkbox' onChange={this.storeLocation}/>
           <span className="control-indicator"></span>
         </label>
 
     </div>
-    <input disabled={this.state.submitDisabled === 0 ? false : true} type='submit' value='Send' />
+    <input name="submitBtn" disabled={this.state.submitDisabled === 0 ? false : true} type='submit' value='Send' />
    </div>)});
   }
 
@@ -210,7 +253,7 @@ class FormComponent extends React.Component {
 
   pickCrisis(){
     this.setState({specifics: (<div>
-      What is the crisis? <input type='text' />
+      What is the crisis? <input name="crisis" type='text' />
       </div>)});
   }
 
@@ -249,6 +292,16 @@ class FormComponent extends React.Component {
 
   makeUrg() {
 
+    let buttons = this.props.probTypes.map(prob => {
+     return (
+       <ProblemRadio
+         key={prob.title}
+         title={prob.title}
+         iconCode={prob.iconCode}
+       />
+     );
+   });
+
     this.setState({urgency: 1});
     if(this.state.step == 0)
     this.setState({show:
@@ -257,14 +310,53 @@ class FormComponent extends React.Component {
           <div>
         <div>
           <div>
-          Who are we worried about? <input placeholder="John Smith" type='text' required name='who'/>
+          Who are we worried about? <input name="name" placeholder="John Smith" type='text' required name='who'/>
           </div>
           <div>
-          How can we reach this person? <input placeholder="+44 123 456 7890" type='text' name='phone' required />
+          How can we reach this person? <input name="phone" placeholder="+44 123 456 7890" type='text' name='phone' required />
           </div>
         </div>
           </div>
-          <button onClick={this.increaseStep1} className='button-block'> Next</button>
+
+         <div>
+
+           <div className="probTypes-contafiner">
+           {buttons}
+           </div>
+
+          <div>
+           Specifics (optional) <input name="extrainfo" type='text'/>
+          </div>
+          </div>)
+
+          <div>
+          <div>
+
+
+           <div >
+            Anything else we should know?
+             <input name="extrainfo" placeholder="E.g. Ran out of medication" type='text'/>
+             </div>
+
+              <label className="control switch success">
+              <span className="control-label small">
+                *I consent to the forwarding of this data to TOYNBE HALL.
+              </span>
+                <input name="consent" type="checkbox" name="checkbox" />
+                <span className="control-indicator"></span>
+              </label>
+
+              <label className="control switch success">
+              <span className="control-label small">
+                (Optional) Share your location.
+              </span>
+              <input name="location" type='checkbox' onChange={this.storeLocation}/>
+                <span className="control-indicator"></span>
+              </label>
+
+          </div>
+          <input name="submitBtn" disabled={this.state.submitDisabled === 0 ? false : true} type='submit' value='Send' />
+         </div>
          </div>)
        });
   }
@@ -297,20 +389,20 @@ class FormComponent extends React.Component {
         </div>
       </div>
       <div>
-       <input type='radio' name='type' value='Health' onChange={this.pickHealth} /> Health
-       <input type='radio' name='type' value='Social' onChange={this.pickSocial} /> Social Isolation
-       <input type='radio' name='type' value='Legal' onChange={this.pickLegal} /> Legal
-       <input type='radio' name='type' value='Crisis' onChange={this.pickCrisis} /> Crisis
-       <input type='radio' name='type' value='Future' onChange={this.pickFuture} /> Later Life Planning
-       <input type='radio' name='type' value='Domestic' onChange={this.pickDomestic} /> Domestic Assistance
-       <input type='radio' name='type' value='Financial' onChange={this.pickFinancial} /> Money and Benefits
-       <input type='text' name='type' placeholder='Other' />
+       <input type='radio' name='category_name' value='Health' onChange={this.pickHealth} /> Health
+       <input type='radio' name='category_name' value='Social' onChange={this.pickSocial} /> Social Isolation
+       <input type='radio' name='category_name' value='Legal' onChange={this.pickLegal} /> Legal
+       <input type='radio' name='category_name' value='Crisis' onChange={this.pickCrisis} /> Crisis
+       <input type='radio' name='category_name' value='Future' onChange={this.pickFuture} /> Later Life Planning
+       <input type='radio' name='category_name' value='Domestic' onChange={this.pickDomestic} /> Domestic Assistance
+       <input type='radio' name='category_name' value='Financial' onChange={this.pickFinancial} /> Money and Benefits
+       <input type='text' name='category_name' placeholder='Other' />
       </div>
       <div>
-      <input type='checkbox' onChange={this.storeLocation}/>Share location
+      <input name="shareLocation" type='checkbox' onChange={this.storeLocation}/>Share location
       </div>
-      <input type='checkbox' required /> Consent to LinkAge+
-      <input type='submit' value='Send' />
+      <input name="consent" type='checkbox' required /> Consent to LinkAge+
+      <input name="submtBtn" type='submit' value='Send' />
   </div>) });
   }
 
@@ -335,19 +427,12 @@ class FormComponent extends React.Component {
                      <p> Someone needs help </p>
                    </button>     </div>) : '';
 
-    let ssteps = (this.state.urgency == 1) ?
-    <Steps current={this.state.step} >
-    <Step title="Person" description="Add the details" />
-    <Step title="Problem" description="Describe the problem" />
-    <Step title="Finishing" description="Location and consent" />
-    </Steps> : '';
 
     let form = (this.state.urgency != 0 ) ? (
       <div>
         <h2> Urgent Referral Request </h2>
         <p> Enter the details below and we'll assess the situation as soon as we can. </p>
-      {ssteps}
-    <form action='/api/referral/add' method='POST'>
+    <form onSubmit={this.handleSubmit}>
     {this.state.show}
     {this.state.specifics}
     <input type='hidden' name='urgent' value={(this.state.urgency==1)} />
