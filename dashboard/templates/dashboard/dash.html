@@ -9,7 +9,7 @@
 <body>
     <div class="container">
         <h1>The DashBoard</h1>
-        <a href="{% url 'csv' %}">Download as CSV</a>
+        <a href="{% url 'download_csv' %}">Download as CSV</a>
         <ul>
         {% for referral in refs %}
             <li>{{referral.sender}},{{referral.name}},{{referral.phone}},{{referral.urgency}},{{referral.date}}</li>
