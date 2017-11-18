@@ -17,7 +17,7 @@ from django.contrib.auth.decorators import login_required
 def dashboard(request):
     referrals_dict = dict()
     referrals_dict["refs"] = Referral.objects.all() \
-            .order_by('urgency', '-date')
+            .order_by('-urgency', '-date')
     referrals_dict["categories"] = []
     for i in range(len(referrals_dict["refs"])):
         referrals_dict["categories"].append(referrals_dict["refs"][i].category_set.all())
